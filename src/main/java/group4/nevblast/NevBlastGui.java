@@ -115,7 +115,10 @@ public class NevBlastGui extends MasterProgram {
         }
   //      Configurator.enableAutoCompleteion(txt_entrezQuery);
         br.close();
+     //   txt_entrezQuery.
+                
         AutoCompleteSupport autoComplete = AutoCompleteSupport.install(txt_entrezQuery, taxonomy);
+       
   //      Autocomplete autoComplete = new Autocomplete(txt_entrezQuery, autocompleteDictionary);
 //        txt_entrezQuery.getDocument().addDocumentListener(autoComplete);
 //        txt_entrezQuery.getInputMap().put(KeyStroke.getKeyStroke("TAB"), "commit");
