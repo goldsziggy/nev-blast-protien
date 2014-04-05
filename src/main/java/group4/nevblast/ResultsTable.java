@@ -91,17 +91,21 @@ public class ResultsTable extends JPanel {
         table = new JTable(tMod);
         table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.setFillsViewportHeight(true);
-
+        table.setAutoCreateRowSorter(true);
         if (DEBUG) {
             table.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     printDebugData(table);
-                    int row = table.rowAtPoint(new Point(e.getX(), e.getY()));
-                    int col = table.columnAtPoint(new Point(e.getX(), e.getY()));
+                    //table.getS
+                   
+                    //int row = table.rowAtPoint(new Point(e.getX(), e.getY()));
+                    //int col = table.columnAtPoint(new Point(e.getX(), e.getY()));
+                    int rowClicked = table.getSelectedRow();
+                    int row = table.convertRowIndexToModel(rowClicked);
+                    int col = table.getSelectedColumn();
                     if(col == 0){
                         String url = (String) table.getModel().getValueAt(row, col);
-
                             // Create Desktop object
                         Desktop d=Desktop.getDesktop();
                         try {
@@ -120,7 +124,7 @@ public class ResultsTable extends JPanel {
                 }
             });
         }
-        table.setAutoCreateRowSorter(true);
+        
         // Create the scroll pane and add the table to it.
         scrollPane = new JScrollPane(table);
 
@@ -170,7 +174,7 @@ public class ResultsTable extends JPanel {
         scatter2dA.resetHighlighting();
         scatter2dB.resetHighlighting();
         for (int i = 0; i < rows.length; i++) {
-            int current = rows[i];
+            int current = table.convertRowIndexToModel(rows[i]);
             scatter3d.setHighlighted(current, true);
             scatter2dA.setHighlighted(current, true);
             scatter2dB.setHighlighted(current, true);

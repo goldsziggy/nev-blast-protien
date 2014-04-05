@@ -34,13 +34,13 @@
  */
 package group4.nevblast;
 
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -53,16 +53,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import org.biojava3.core.sequence.ProteinSequence;
 import org.biojava3.core.sequence.io.FastaReaderHelper;
 
@@ -104,16 +103,23 @@ public class NevBlastGui extends MasterProgram {
         File file = new File("taxonomy.txt");
         
         BufferedReader br = new BufferedReader(new FileReader(file));
-        ArrayList<String> autocompleteDictionary = new ArrayList<String>();
+        //ArrayList<String> autocompleteDictionary = new ArrayList<String>();
+        EventList taxonomy = new BasicEventList();
+//        Vector<String> taxonomy = null;
         String line;
         while ((line = br.readLine()) != null) {
-            autocompleteDictionary.add(line);
+//            taxonomy.add(line);
+            taxonomy.add(line);
+            txt_entrezQuery.addItem(line);
+            
         }
+  //      Configurator.enableAutoCompleteion(txt_entrezQuery);
         br.close();
-        Autocomplete autoComplete = new Autocomplete(txt_entrezQuery, autocompleteDictionary);
-        txt_entrezQuery.getDocument().addDocumentListener(autoComplete);
-        txt_entrezQuery.getInputMap().put(KeyStroke.getKeyStroke("TAB"), "commit");
-        txt_entrezQuery.getActionMap().put("commit", autoComplete.new CommitAction());
+        AutoCompleteSupport autoComplete = AutoCompleteSupport.install(txt_entrezQuery, taxonomy);
+  //      Autocomplete autoComplete = new Autocomplete(txt_entrezQuery, autocompleteDictionary);
+//        txt_entrezQuery.getDocument().addDocumentListener(autoComplete);
+//        txt_entrezQuery.getInputMap().put(KeyStroke.getKeyStroke("TAB"), "commit");
+//        txt_entrezQuery.getActionMap().put("commit", autoComplete.new CommitAction());
         
     }
     private void makeMenu(){
@@ -685,7 +691,7 @@ public class NevBlastGui extends MasterProgram {
         eValueLabel = new javax.swing.JLabel();
         lbl_entrezQuery = new javax.swing.JLabel();
         numOfResultsLabel = new javax.swing.JLabel();
-        txt_entrezQuery = new javax.swing.JTextField();
+        txt_entrezQuery = new javax.swing.JComboBox();
         jScrollPane1 = new javax.swing.JScrollPane();
         txt_fastaSequence = new javax.swing.JTextArea();
         txt_signature1 = new javax.swing.JTextField();
@@ -822,18 +828,12 @@ public class NevBlastGui extends MasterProgram {
         gridBagConstraints.insets = new java.awt.Insets(14, 36, 0, 0);
         getContentPane().add(numOfResultsLabel, gridBagConstraints);
 
-        txt_entrezQuery.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(51, 255, 255), new java.awt.Color(0, 51, 255)));
-        txt_entrezQuery.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_entrezQueryActionPerformed(evt);
-            }
-        });
+        txt_entrezQuery.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 11;
         gridBagConstraints.ipadx = 246;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weighty = 0.1;
         gridBagConstraints.insets = new java.awt.Insets(10, 14, 0, 0);
         getContentPane().add(txt_entrezQuery, gridBagConstraints);
 
@@ -886,7 +886,7 @@ public class NevBlastGui extends MasterProgram {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 8;
-        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.gridheight = 3;
         gridBagConstraints.ipadx = 246;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(10, 14, 0, 0);
@@ -975,10 +975,6 @@ public class NevBlastGui extends MasterProgram {
         
 // TODO add your handling code here:
     }//GEN-LAST:event_clearButtonActionPerformed
-
-    private void txt_entrezQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_entrezQueryActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_entrezQueryActionPerformed
     private void createUserMatrix() {
         final JFrame f = new JFrame("User-Entered Matrix");
         // f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -1195,7 +1191,9 @@ public class NevBlastGui extends MasterProgram {
         
         
         //get the entrez query
-        entrezQuery = txt_entrezQuery.getText();
+       // entrezQuery = txt_entrezQuery.getText();
+        entrezQuery = txt_entrezQuery.getSelectedItem().toString();
+        System.out.println(entrezQuery);
     }//end sanitize input
 
     boolean isScientificNotation(String numberString) {
@@ -1447,7 +1445,7 @@ public class NevBlastGui extends MasterProgram {
     private javax.swing.JLabel signature2Label;
     private javax.swing.JButton submitButton;
     private javax.swing.JTextField txt_eValue;
-    private javax.swing.JTextField txt_entrezQuery;
+    private javax.swing.JComboBox txt_entrezQuery;
     private javax.swing.JTextArea txt_fastaSequence;
     private javax.swing.JTextField txt_numberOfResults;
     private javax.swing.JTextField txt_queryName;
