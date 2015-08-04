@@ -1,0 +1,1 @@
+An bio-informatic application to query BLAST database
