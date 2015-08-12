@@ -56,10 +56,10 @@
 
 package group4.nevblast;
 
-import javax.swing.JInternalFrame;
-
-import java.awt.event.*;
 import java.awt.*;
+import java.awt.event.*;
+import javax.swing.JInternalFrame;
+import javax.swing.WindowConstants;
 
 /* Used by InternalFrameDemo.java. */
 public class MyInternalFrame extends JInternalFrame {
@@ -74,7 +74,10 @@ public class MyInternalFrame extends JInternalFrame {
               true);//iconifiable
 
         //...Create the GUI and put it in the window...
-
+        
+        //hide it when it is closed
+        setDefaultCloseOperation(
+                                        WindowConstants.HIDE_ON_CLOSE);
         //...Then set the window size or call pack...
         setSize(300,300);
 
@@ -90,6 +93,11 @@ public class MyInternalFrame extends JInternalFrame {
 
         //...Create the GUI and put it in the window...
 
+        
+        //hide it when it is closed
+        setDefaultCloseOperation(
+                                        WindowConstants.HIDE_ON_CLOSE);
+        
         //...Then set the window size or call pack...
         setSize(300,300);
 

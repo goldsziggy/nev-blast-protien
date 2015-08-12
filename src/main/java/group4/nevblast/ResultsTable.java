@@ -24,15 +24,13 @@ package group4.nevblast;
 
 import java.awt.Component;
 import java.awt.Desktop;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -41,9 +39,14 @@ import java.util.logging.Logger;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import org.jzy3d.plot3d.primitives.selectable.SelectableScatter;
 
 /**
@@ -91,7 +94,13 @@ public class ResultsTable extends JPanel {
         table = new JTable(tMod);
         table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.setFillsViewportHeight(true);
-        table.setAutoCreateRowSorter(true);
+       // table.setAutoCreateRowSorter(true);
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
+        sorter.setComparator(1, new BigDecimalComparator());
+        sorter.setComparator(2, new DoubleComparator());
+        sorter.setComparator(3, new DoubleComparator());
+        table.setRowSorter(sorter);
+        
         if (DEBUG) {
             table.addMouseListener(new MouseAdapter() {
                 @Override
@@ -185,8 +194,8 @@ public class ResultsTable extends JPanel {
             outputMessage += "Hit From: " + blastData.get(current).getHitFrom() + "<br>";
             outputMessage += "Hit To: " + blastData.get(current).getHitTo() + "<br>";
             outputMessage += "eValue: " + blastData.get(current).geteValue() + "<br><br>";
-            outputMessage += "Sequence Score A: " + blastData.get(current).getScoreA() + "<br>";
-            outputMessage += "Sequence Score B: " + blastData.get(current).getScoreB() + "<br><br><br>";
+            outputMessage += "Sequence Score 1: " + blastData.get(current).getScoreA() + "<br>";
+            outputMessage += "Sequence Score 2: " + blastData.get(current).getScoreB() + "<br><br><br>";
             outputMessage += "</font>";
         }
         outputWindow.setText("<html>" + outputHeader + outputMessage + "</html>");

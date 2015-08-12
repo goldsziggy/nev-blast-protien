@@ -86,10 +86,11 @@ public class MyScatterSelector extends AWTScatterMouseSelector {
                     outputMessage += "Hit From: " + data.get(i).getHitFrom() + "<br>";
                     outputMessage += "Hit To: " + data.get(i).getHitTo() + "<br>";
                     outputMessage += "eValue: " + data.get(i).geteValue() + "<br><br>";
-                    outputMessage += "Sequence Score A: " + data.get(i).getScoreA() + "<br>";
-                    outputMessage += "Sequence Score B: " + data.get(i).getScoreB()+ "<br><br><br>";
+                    outputMessage += "Sequence Score 1: " + data.get(i).getScoreA() + "<br>";
+                    outputMessage += "Sequence Score 2: " + data.get(i).getScoreB()+ "<br><br><br>";
                     outputMessage += "</font>";
-                    tableView.table.addRowSelectionInterval(i, i);
+                    int ndx= tableView.table.convertRowIndexToModel(i);
+                    tableView.table.addRowSelectionInterval(ndx, ndx);
                 }
         } 
         
@@ -134,10 +135,12 @@ public class MyScatterSelector extends AWTScatterMouseSelector {
                 outputMessage += "Hit From: " + data.get(i).getHitFrom() + "<br>";
                 outputMessage += "Hit To: " + data.get(i).getHitTo() + "<br>";
                 outputMessage += "eValue: " + data.get(i).geteValue() + "<br><br>";
-                outputMessage += "Sequence Score A: " + data.get(i).getScoreA() + "<br>";
-                outputMessage += "Sequence Score B: " + data.get(i).getScoreB()+ "<br><br><br>";
+                outputMessage += "Sequence Score 1: " + data.get(i).getScoreA() + "<br>";
+                outputMessage += "Sequence Score 2: " + data.get(i).getScoreB()+ "<br><br><br>";
                 outputMessage += "</font>";
-                tableView.table.addRowSelectionInterval(i, i);
+                int ndx= tableView.table.convertRowIndexToModel(i);
+                tableView.table.addRowSelectionInterval(ndx, ndx);
+                //tableView.table.addRowSelectionInterval(i, i);
                 //tableView.table.set
             }
         } 

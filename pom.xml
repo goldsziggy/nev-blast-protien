@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>group4</groupId>
-    <artifactId>nev-blast-protien</artifactId>
+    <artifactId>nev-blast-protein</artifactId>
     <version>1.0.01-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>nev-blast-protien</name>
+    <name>nev-blast-protein</name>
     <url>http://maven.apache.org</url>
 
     <properties>

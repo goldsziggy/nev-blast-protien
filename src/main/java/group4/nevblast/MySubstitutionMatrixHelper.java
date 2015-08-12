@@ -1,6 +1,6 @@
 
 /*
- * c
+ * 
     This file is part of NEVBLAST.
 
     NEVBLAST is free software: you can redistribute it and/or modify
