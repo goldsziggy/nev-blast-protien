@@ -80,15 +80,17 @@ public class ResultsTable extends JPanel {
         scatter2dB = scat2dB;
 
         String[] columnNames = {"Accession", "EValue",
-            "Signature Score 1", "Signature Score 2", "Sequence"};
-        Object[][] tableData = new Object[myLength][6];
+            "Signature 1 Match", "Signature Score 1", "Signature 2 Match", "Signature 2 Score", "Sequence"};
+        Object[][] tableData = new Object[myLength][7];
         for (int i = 0; i < myLength; i++) {
             tableData[i][0] = returnedBLAST.get(i).getAccession();
             //	tableData[i][1] = returnedBLAST[i].getName();
             tableData[i][1] = returnedBLAST.get(i).eValue;
-            tableData[i][2] = returnedBLAST.get(i).getScoreA();
-            tableData[i][3] = returnedBLAST.get(i).getScoreB();
-            tableData[i][4] = returnedBLAST.get(i).getHitSequence();
+            tableData[i][2] = returnedBLAST.get(i).getSigAMatch();
+            tableData[i][3] = returnedBLAST.get(i).getScoreA();
+            tableData[i][4] = returnedBLAST.get(i).getSigBMatch();
+            tableData[i][5] = returnedBLAST.get(i).getScoreB();
+            tableData[i][6] = returnedBLAST.get(i).getHitSequence();
         }
         tMod = new DefaultTableModel(tableData, columnNames);
         table = new JTable(tMod);
@@ -156,7 +158,8 @@ public class ResultsTable extends JPanel {
      */
     public void updateTable(ArrayList<SequenceHit> BLAST) {
         String[] columnNames = {"Accession", "EValue",
-            "Signature Score 1", "Signature Score 2", "Sequence"};
+            "Signature 1 Match", "Signature Score 1", "Signature 2 Match", "Signature 2 Score", "Sequence"};
+       
         table.setModel(new DefaultTableModel(columnNames, BLAST.size()));
         if (BLAST.size() > 0) {
             tMod = (DefaultTableModel) table.getModel(); // Give the table the
@@ -165,10 +168,12 @@ public class ResultsTable extends JPanel {
                 // Add values to the table.
                 tMod.setValueAt(BLAST.get(i).getAccession(), i, 0);
                 //tMod.setValueAt(BLAST[i].getName(), i, 1);
-                tMod.setValueAt(BLAST.get(i).geteValue(), i, 2);
+                tMod.setValueAt(BLAST.get(i).geteValue(), i, 1);
+                tMod.setValueAt(BLAST.get(i).getSigAMatch(), i, 2);
                 tMod.setValueAt(BLAST.get(i).getScoreA(), i, 3);
-                tMod.setValueAt(BLAST.get(i).getScoreB(), i, 4);
-                tMod.setValueAt(BLAST.get(i).getHitSequence(), i, 5);
+                tMod.setValueAt(BLAST.get(i).getSigBMatch(), i, 5);
+                tMod.setValueAt(BLAST.get(i).getScoreB(), i, 6);
+                tMod.setValueAt(BLAST.get(i).getHitSequence(), i, 7);
             }
         }
     }

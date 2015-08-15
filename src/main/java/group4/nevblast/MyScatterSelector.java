@@ -86,8 +86,10 @@ public class MyScatterSelector extends AWTScatterMouseSelector {
                     outputMessage += "Hit From: " + data.get(i).getHitFrom() + "<br>";
                     outputMessage += "Hit To: " + data.get(i).getHitTo() + "<br>";
                     outputMessage += "eValue: " + data.get(i).geteValue() + "<br><br>";
-                    outputMessage += "Sequence Score 1: " + data.get(i).getScoreA() + "<br>";
-                    outputMessage += "Sequence Score 2: " + data.get(i).getScoreB()+ "<br><br><br>";
+                    outputMessage += "Sequence 1 Match: " + data.get(i).getSigAMatch() + "<br>";
+                    outputMessage += "Sequence 1 Score: " + data.get(i).getScoreA() + "<br>";
+                    outputMessage += "Sequence 2 Match: " + data.get(i).getSigBMatch() + "<br>";
+                    outputMessage += "Sequence 2 Score: " + data.get(i).getScoreB()+ "<br><br><br>";
                     outputMessage += "</font>";
                     int ndx= tableView.table.convertRowIndexToModel(i);
                     tableView.table.addRowSelectionInterval(ndx, ndx);
@@ -135,8 +137,10 @@ public class MyScatterSelector extends AWTScatterMouseSelector {
                 outputMessage += "Hit From: " + data.get(i).getHitFrom() + "<br>";
                 outputMessage += "Hit To: " + data.get(i).getHitTo() + "<br>";
                 outputMessage += "eValue: " + data.get(i).geteValue() + "<br><br>";
-                outputMessage += "Sequence Score 1: " + data.get(i).getScoreA() + "<br>";
-                outputMessage += "Sequence Score 2: " + data.get(i).getScoreB()+ "<br><br><br>";
+                outputMessage += "Sequence 1 Match: " + data.get(i).getSigAMatch() + "<br>";
+                outputMessage += "Sequence 1 Score: " + data.get(i).getScoreA() + "<br>";
+                outputMessage += "Sequence 2 Match: " + data.get(i).getSigBMatch() + "<br>";
+                outputMessage += "Sequence 2 Score: " + data.get(i).getScoreB()+ "<br><br><br>";
                 outputMessage += "</font>";
                 int ndx= tableView.table.convertRowIndexToModel(i);
                 tableView.table.addRowSelectionInterval(ndx, ndx);

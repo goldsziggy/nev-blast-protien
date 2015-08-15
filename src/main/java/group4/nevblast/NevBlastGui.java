@@ -1568,6 +1568,31 @@ public class NevBlastGui extends MasterProgram {
         }
         return true;
     }
+    
+    /**
+     * This method returns the max signature scores of the given sequenceList.
+     * @param toGraph
+     * @return a size 2 array list.  The [0] item will equal the MaxSigA score and the [1] item will match the maxSigB score.
+     */
+    public ArrayList<Double> getMaxSigScores(ArrayList<SequenceHit> toGraph){
+        ArrayList<Double> ret = new ArrayList<Double>();
+        double maxA = 0;
+        double maxB = 0;
+        double tempA = 0;
+        double tempB = 0;
+        for(SequenceHit seq : toGraph){
+            tempA = Double.parseDouble(seq.getScoreA());
+            tempB = Double.parseDouble(seq.getScoreB());
+            if( tempA > maxA)
+                maxA = tempA;
+            if( tempB > maxB)
+                maxB = tempB;
+        }
+        
+        ret.add(maxA);
+        ret.add(maxB);
+        return ret;
+    }
 
     /*
      * Handles the sizing and location of each graphed output window
@@ -1585,11 +1610,13 @@ public class NevBlastGui extends MasterProgram {
         setExtendedState(MAXIMIZED_BOTH);
         // desktopOutput.
         String outputWindowHeader;
-
+        ArrayList maxScores = getMaxSigScores(toGraph);
         outputWindowHeader = "Fasta Header: " + fastaHead + "<br>";
         outputWindowHeader += "Fasta Sequence: " + fastaSequence + "<br>";
         outputWindowHeader += "Signature 1: " + signature1 + "<br>";
-        outputWindowHeader += "Signature 2: " + signature2 + "<br><br><br>";
+        outputWindowHeader += "Max Signature 1: " + maxScores.get(0) + "<br>";
+        outputWindowHeader += "Signature 2: " + signature2 + "<br>";
+        outputWindowHeader += "Max Signature 2: " + maxScores.get(1) + "<br><br><br>";
         JTextPane outputWindow = new JTextPane();
 
         outputWindow.setSize(width, height);
