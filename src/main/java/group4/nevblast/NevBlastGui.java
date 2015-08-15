@@ -48,10 +48,8 @@ import java.awt.event.WindowEvent;
 import java.io.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -89,12 +87,14 @@ public class NevBlastGui extends MasterProgram {
         initComponents();
         //adds the auto-complete functionality to the entrez query text field
         taxonomy.add("");
+
+        
         autoComplete = AutoCompleteSupport.install(txt_entrezQuery, taxonomy);
         txt_entrezQuery.setEditable(true);
         txt_entrezQuery.setSelectedIndex(0);
-//      txt_entrezQuery.removeAllItems();
+//        txt_entrezQuery.removeAllItems();
         txt_entrezQuery.getEditor().getEditorComponent().addKeyListener(new KeyAdapter() {
-
+        
             //implements the auto-complete functionality 
             @Override
             public void keyReleased(KeyEvent event) {
@@ -114,6 +114,10 @@ public class NevBlastGui extends MasterProgram {
                 }
             }
         });
+        
+        //The following code makes the EntrezQuery select box look like a normal text box
+        txt_entrezQuery.setUI(new EntrezQuerySelectUI());
+        txt_entrezQuery.remove(txt_entrezQuery.getComponent(0));
         
         //initial entered values and states of the GUI components
         jLabel10.setVisible(false);
@@ -895,7 +899,6 @@ public class NevBlastGui extends MasterProgram {
         setBackground(new java.awt.Color(0, 0, 0));
         setBounds(new java.awt.Rectangle(0, 0, 0, 0));
         setMinimumSize(new java.awt.Dimension(800, 600));
-        setPreferredSize(new java.awt.Dimension(800, 600));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/group4/nevblast/colorsplash.gif"))); // NOI18N
