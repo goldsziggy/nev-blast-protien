@@ -66,10 +66,20 @@ public class NevBlastGui extends MasterProgram {
     public static ArrayList<String> numberSig1 = new ArrayList<String>();
     public static ArrayList<String> numberSig2 = new ArrayList<String>();
     public boolean isGraphScaled;
+    public boolean isGraphOnlySelected;
     public EventList taxonomy = new BasicEventList();
     AutoCompleteSupport autoComplete;
     public int clickCheck = 0;
     public int checkInput = 0;
+    public ArrayList<MyInternalFrame> activeFrames = new ArrayList<MyInternalFrame>();
+    
+    
+    //grapher/output variables
+    ResultsTable newContentPane;
+    Grapher chart3d;
+    Grapher chart2dA;
+    Grapher chart2dB;
+    ArrayList<SequenceHit> returnedSequences;
 
     /**
      * Creates new form NevBlastGui - defaults filled in
@@ -144,6 +154,7 @@ public class NevBlastGui extends MasterProgram {
         clearClicked.setVisible(false);
         submitClicked.setVisible(false);
         
+        isGraphOnlySelected = false;
         //txt_entrezQuery.setVisible(false);
         //lbl_entrezQuery.setVisible(false);
     }
@@ -306,41 +317,103 @@ public class NevBlastGui extends MasterProgram {
 
     /*
      * Creates the menu option for raw/scaled graphing
+     * @TODO add menu item for graphing only selected table
      */
     private JMenu makeMenuGraph() {
         final JMenu graph = new JMenu("Graphing Options");
         //set default
         final JCheckBoxMenuItem cbMenuItem1;
+        final JCheckBoxMenuItem cbMenuItem2;
+        
         cbMenuItem1 = new JCheckBoxMenuItem("Raw Graph Points");
+        cbMenuItem2 = new JCheckBoxMenuItem("Scale Graph Points");
+        
         cbMenuItem1.setMnemonic(KeyEvent.VK_C);
         cbMenuItem1.addActionListener(new ActionListener() {
 
             public void actionPerformed(final ActionEvent event) {
                 isGraphScaled = false;
-                for (int i = 0; i < graph.getItemCount(); i++) {
-                    ((JCheckBoxMenuItem) graph.getItem(i)).setSelected(false);
-                }
+                
                 cbMenuItem1.setSelected(true);
+                cbMenuItem2.setSelected(false);
             }
         });
         cbMenuItem1.setSelected(true);
 
-        final JCheckBoxMenuItem cbMenuItem2;
-        cbMenuItem2 = new JCheckBoxMenuItem("Scale Graph Points");
+        
+        
         cbMenuItem2.setMnemonic(KeyEvent.VK_C);
         cbMenuItem2.addActionListener(new ActionListener() {
 
             public void actionPerformed(final ActionEvent event) {
+                
                 isGraphScaled = true;
-                for (int i = 0; i < graph.getItemCount(); i++) {
-                    ((JCheckBoxMenuItem) graph.getItem(i)).setSelected(false);
-                }
+                cbMenuItem1.setSelected(false);
                 cbMenuItem2.setSelected(true);
             }
-        });
+        }); 
+        
+        final JCheckBoxMenuItem cbMenuItem3;
+        cbMenuItem3 = new JCheckBoxMenuItem("Graph Only Selected");
+        cbMenuItem3.setMnemonic(KeyEvent.VK_C);
+        cbMenuItem3.addActionListener(new ActionListener() {
+
+            public void actionPerformed(final ActionEvent event) {
+                isGraphOnlySelected = !(isGraphOnlySelected);
+            }
+        }); 
+        
+        final JMenuItem cbMenuItem4;
+        cbMenuItem4 = new JMenuItem("Refresh Graph");
+        cbMenuItem4.setMnemonic(KeyEvent.VK_C);
+        cbMenuItem4.addActionListener(new ActionListener() {
+
+            public void actionPerformed(final ActionEvent event) {
+                if(isGraphOnlySelected){
+                    chart3d.data = newContentPane.selectedBlastData;
+                    chart2dA.data = newContentPane.selectedBlastData;
+                    chart2dB.data = newContentPane.selectedBlastData;
+                }else{
+                    chart3d.data = returnedSequences;
+                    chart2dA.data = returnedSequences;
+                    chart2dB.data = returnedSequences;
+                }
+                chart3d.setIsGraphScaled(isGraphScaled);
+                chart2dA.setIsGraphScaled(isGraphScaled);
+                chart2dB.setIsGraphScaled(isGraphScaled);
+                try {
+                        chart3d.init();
+                        chart2dA.init();
+                        chart2dB.init();
+                    } catch (IOException ex) {
+                        Logger.getLogger(NevBlastGui.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                chart3d.attachMouse();
+                chart2dA.attachMouse();
+                chart2dB.attachMouse();
+                chart3d.attachResultTable(newContentPane);
+                chart2dA.attachResultTable(newContentPane);
+                chart2dB.attachResultTable(newContentPane);
+
+                chart3d.attachScatters(chart2dA.scatter2dA, chart2dB.scatter2dB);
+                chart2dA.attachScatters(chart3d.scatter, chart2dB.scatter2dB);
+                chart2dB.attachScatters(chart2dA.scatter2dA, chart3d.scatter);
+                
+                removeFrame("Result 3d");
+                removeFrame("Result 2dA");
+                removeFrame("Result 2dB");
+                
+                createFrame("Result 3d", chart3d, width / 4, 0, (width / 2), (height / 3) * 2);
+                createFrame("Result 2dA", chart2dA, 0, 0, (width / 4), height / 3);
+                createFrame("Result 2dB", chart2dB, 0, height / 3, (width / 4), height / 3);
+            }
+        }); 
         
         graph.add(cbMenuItem1);
         graph.add(cbMenuItem2);
+        graph.addSeparator();
+        graph.add(cbMenuItem3);
+        graph.add(cbMenuItem4);
         return graph;
     }
 
@@ -1598,6 +1671,7 @@ public class NevBlastGui extends MasterProgram {
      * Handles the sizing and location of each graphed output window
      */
     public void createOutput(ArrayList<SequenceHit> toGraph) throws IOException, SecurityException, UnsatisfiedLinkError, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+        returnedSequences = toGraph;
         //if graph is contains only one element and its error code is not empty
         if (toGraph.size() == 1 && !toGraph.get(0).getError().isEmpty()) {
             String error = "Blast reported that no results back, please see error message\n\n\n";
@@ -1625,17 +1699,17 @@ public class NevBlastGui extends MasterProgram {
 
         JScrollPane scrollPane = new JScrollPane(outputWindow);
 
-        Grapher chart3d = new Grapher(toGraph, outputWindow, outputWindowHeader, "3dChart");
+        chart3d = new Grapher(toGraph, outputWindow, outputWindowHeader, "3dChart");
         chart3d.setIsGraphScaled(isGraphScaled);
         chart3d.init();
-        Grapher chart2dA = new Grapher(toGraph, outputWindow, outputWindowHeader, "2dChartA", chart3d.getDefinedColors());
+        chart2dA = new Grapher(toGraph, outputWindow, outputWindowHeader, "2dChartA", chart3d.getDefinedColors());
         chart2dA.setIsGraphScaled(isGraphScaled);
         chart2dA.init();
-        Grapher chart2dB = new Grapher(toGraph, outputWindow, outputWindowHeader, "2dChartB", chart3d.getDefinedColors());
+        chart2dB = new Grapher(toGraph, outputWindow, outputWindowHeader, "2dChartB", chart3d.getDefinedColors());
         chart2dB.setIsGraphScaled(isGraphScaled);
         chart2dB.init();
 
-        ResultsTable newContentPane = new ResultsTable(toGraph, toGraph.size(), outputWindow, outputWindowHeader, chart3d.scatter, chart2dA.scatter2dA, chart2dB.scatter2dB);       //only works for 3d
+        newContentPane = new ResultsTable(toGraph, toGraph.size(), outputWindow, outputWindowHeader, chart3d.scatter, chart2dA.scatter2dA, chart2dB.scatter2dB);       //only works for 3d
         chart3d.attachResultTable(newContentPane);
         chart2dA.attachResultTable(newContentPane);
         chart2dB.attachResultTable(newContentPane);
@@ -1680,16 +1754,33 @@ public class NevBlastGui extends MasterProgram {
         jComp.setMinimumSize(dim);
         frame.add(jComp);
 
+        frame.setName(windowName);
         frame.setSize(sizeW, sizeH);
         frame.setLocation(xpos, ypos);
-
         desktopOutput.add(frame);
         try {
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {
         }
+        activeFrames.add(frame);
     }
 
+    
+    protected void removeFrame(String windowName){
+//        activeFrames.
+//        activeFrames.rem
+        for(MyInternalFrame f : activeFrames){    
+//            desktopOutput.remove(f);
+//            f.dispose();
+           // f.
+            if(f.getName().equals(windowName)){
+                desktopOutput.remove(f);
+                activeFrames.remove(f);
+                f.dispose();
+                break;
+            }
+        }
+    }
     /**
      * This version creates the results table at the bottom of the screen
      *
@@ -1699,17 +1790,21 @@ public class NevBlastGui extends MasterProgram {
     protected void createFrame(String windowName, ResultsTable resultsTable) {
         MyInternalFrame frame = new MyInternalFrame(windowName);
         frame.setVisible(true);
+        frame.setName(windowName);
         resultsTable.setOpaque(true);
 
         frame.add(resultsTable);
 
+        frame.setName(windowName);
         frame.setSize(width, height / 3);
         frame.setLocation(0, ((height / 3) * 2) - 10);
         desktopOutput.add(frame);
+        
         try {
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {
         }
+        activeFrames.add(frame);
     }
 
     /**
@@ -1723,6 +1818,7 @@ public class NevBlastGui extends MasterProgram {
         frame.setVisible(true);
         // resultsText.setOpaque(true);
         frame.add(resultsText);
+        frame.setName(windowName);
 
         frame.setSize(width / 4, (height / 3) * 2);
         frame.setLocation((width / 4) * 3, 0);
@@ -1732,6 +1828,7 @@ public class NevBlastGui extends MasterProgram {
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {
         }
+        activeFrames.add(frame);
     }
 
     /*

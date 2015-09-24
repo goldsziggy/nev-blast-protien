@@ -183,6 +183,7 @@ public class Grapher extends AbstractAnalysis {
         scatter2dB.setHighlightColor(Color.BLUE);
         /// scatter2d.s
         //     scatter.
+        chart = new Chart();
         chart = s.newChart(Quality.Advanced, Toolkit.awt);
 
         /*

@@ -66,6 +66,7 @@ public class MyScatterSelector extends AWTScatterMouseSelector {
     }
 
     protected void processSelection(Scene scene, View view, int width, int height) {
+        tableView.resetSelectedBlast();
         scatter.resetHighlighting();
         otherScatter1.resetHighlighting();
         otherScatter2.resetHighlighting();
@@ -78,6 +79,7 @@ public class MyScatterSelector extends AWTScatterMouseSelector {
             if(!disabled)
                 if (matchRectangleSelection(in, out, projection[i], width, height)) {
                     scatter.setHighlighted(i, true);
+                    tableView.addSelectedBlast(data.get(i));
                     otherScatter1.setHighlighted(i, true);
                     otherScatter2.setHighlighted(i, true);
                     outputMessage += "<font color=\"" + data.get(i).getHexColor() + "\">";
@@ -117,6 +119,7 @@ public class MyScatterSelector extends AWTScatterMouseSelector {
     public void mouseClicked(MouseEvent e) {    
      
         scatter.resetHighlighting();
+        tableView.resetSelectedBlast();
         tableView.table.clearSelection();
   
         Coord3d[] projection = scatter.getProjection();
@@ -131,6 +134,7 @@ public class MyScatterSelector extends AWTScatterMouseSelector {
         for (int i = 0; i < projection.length; i++) {
             if (matchRectangleSelection(tempIn, tempOut, projection[i], width, height)) {
                 scatter.setHighlighted(i, true);
+                tableView.addSelectedBlast(data.get(i));
                 outputMessage += "<font color=\"" + data.get(i).getHexColor() + "\">";
                 outputMessage += "Accession Number: " + data.get(i).getAccession() + "<br>";
                 outputMessage += "Hit Sequence: " + data.get(i).getHitSequence() + "<br>";

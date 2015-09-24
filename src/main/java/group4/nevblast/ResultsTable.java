@@ -59,6 +59,7 @@ public class ResultsTable extends JPanel {
     private final JScrollPane scrollPane;
     private static DefaultTableModel tMod;
     ArrayList<SequenceHit> blastData;
+    ArrayList<SequenceHit> selectedBlastData;
     JTextPane outputWindow;
     String outputHeader;
     SelectableScatter scatter3d;
@@ -99,8 +100,10 @@ public class ResultsTable extends JPanel {
        // table.setAutoCreateRowSorter(true);
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
         sorter.setComparator(1, new BigDecimalComparator());
-        sorter.setComparator(2, new DoubleComparator());
+        //sorter.setComparator(2, new StringComparator());
         sorter.setComparator(3, new DoubleComparator());
+        //sorter.setComparator(4, new DoubleComparator());
+        sorter.setComparator(5, new DoubleComparator());
         table.setRowSorter(sorter);
         
         if (DEBUG) {
@@ -166,6 +169,7 @@ public class ResultsTable extends JPanel {
             // new model.
             for (int i = 0; i < BLAST.size(); i++) {
                 // Add values to the table.
+                
                 tMod.setValueAt(BLAST.get(i).getAccession(), i, 0);
                 //tMod.setValueAt(BLAST[i].getName(), i, 1);
                 tMod.setValueAt(BLAST.get(i).geteValue(), i, 1);
@@ -187,11 +191,13 @@ public class ResultsTable extends JPanel {
         scatter3d.resetHighlighting();
         scatter2dA.resetHighlighting();
         scatter2dB.resetHighlighting();
+        this.resetSelectedBlast();
         for (int i = 0; i < rows.length; i++) {
             int current = table.convertRowIndexToModel(rows[i]);
             scatter3d.setHighlighted(current, true);
             scatter2dA.setHighlighted(current, true);
             scatter2dB.setHighlighted(current, true);
+            this.addSelectedBlast(blastData.get(current));
             //     System.out.println(model.getValueAt(rows[i], 0));//get the accession number
             outputMessage += "<font color=\"" + blastData.get(current).getHexColor() + "\">";
             outputMessage += "Accession Number: " + blastData.get(current).getAccession() + "<br>";
@@ -206,5 +212,13 @@ public class ResultsTable extends JPanel {
         outputWindow.setText("<html>" + outputHeader + outputMessage + "</html>");
         outputMessage = "";
 
+    }
+    
+    public void resetSelectedBlast(){
+        selectedBlastData = new ArrayList<SequenceHit>();
+    }
+    
+    public void addSelectedBlast(SequenceHit selected){
+        selectedBlastData.add(selected);
     }
 }
